@@ -128,10 +128,6 @@ theme2[ImGuiCol::NavWindowingHighlight] = {"#{theme2Colors["darkerGrey"]}", 1.0}
 theme2[ImGuiCol::NavWindowingDimBg] = {"#{theme2Colors["darkerGrey"]}", 1.0}
 theme2[ImGuiCol::ModalWindowDimBg] = {"#{theme2Colors["darkerGrey"]}", 1.0}
 
-theme2_hash = theme2.map do |col, (color, alpha)|
-    [col.to_i.to_s, [color, alpha]]
-end
-  
 theme2_json = theme2.to_h { |key, value| { key.to_i.to_s, value } }.to_json
 puts theme2_json
 
@@ -173,21 +169,49 @@ alias OnClickCb = Proc(Int32, Void)
 
 @[Link("xframesshared")]
 lib XFrames
-  fun init(
-    assetsBasePath : Pointer(LibC::Char),
-    rawFontDefinitions : Pointer(LibC::Char),
-    rawStyleOverrideDefinitions : Pointer(LibC::Char),
-    onInit : OnInitCb,
-    onTextChanged : OnTextChangedCb,
-    onComboChanged : OnComboChangedCb,
-    onNumericValueChanged : OnNumericValueChangedCb,
-    onBooleanValueChanged : OnBooleanValueChangedCb,
-    onMultipleNumericValuesChanged : OnMultipleNumericValuesChangedCb,
-    onClick : OnClickCb
-  ) : Nil
+    fun init(
+        assetsBasePath : Pointer(LibC::Char),
+        rawFontDefinitions : Pointer(LibC::Char),
+        rawStyleOverrideDefinitions : Pointer(LibC::Char),
+        onInit : OnInitCb,
+        onTextChanged : OnTextChangedCb,
+        onComboChanged : OnComboChangedCb,
+        onNumericValueChanged : OnNumericValueChangedCb,
+        onBooleanValueChanged : OnBooleanValueChangedCb,
+        onMultipleNumericValuesChanged : OnMultipleNumericValuesChangedCb,
+        onClick : OnClickCb
+    ) : Nil
+
+    fun setElement(
+        element_json : Pointer(LibC::Char)
+    ) : Nil
+
+    fun setChildren(
+        id : Int32,
+        children_json : Pointer(LibC::Char)
+    ) : Nil
 end
 
-onInit = ->() {  }
+onInit = ->() { 
+    rootNode = {
+        "id" => 0,
+        "type" => "node",
+        "root" => true
+    }
+    unformattedText = {
+        "id" => 1,
+        "type" => "unformatted-text",
+        "text" => "Hello, world"
+    }
+
+    rootNode_json = rootNode.to_json
+    unformattedText_json = unformattedText.to_json
+
+    XFrames.setElement(rootNode_json)
+    XFrames.setElement(unformattedText_json)
+
+    XFrames.setChildren(0, [1].to_json)
+}
 onTextChanged = ->(id : Int32, value : Pointer(LibC::Char)) {  }
 onComboChanged = ->(id : Int32, selected_index : Int32) {  }
 onNumericValueChanged = ->(id : Int32, value : Float32) {  }
