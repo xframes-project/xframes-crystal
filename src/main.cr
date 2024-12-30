@@ -159,5 +159,53 @@ font_defs = {
   
 
 # Convert to JSON
-json_string = font_defs.to_json
-puts json_string
+font_defs_json = font_defs.to_json
+puts font_defs_json
+
+
+alias OnInitCb = Proc(Void)
+alias OnTextChangedCb = Proc(Int32, Pointer(LibC::Char), Void)
+alias OnComboChangedCb = Proc(Int32, Int32, Nil)
+alias OnNumericValueChangedCb = Proc(Int32, Float32, Void)
+alias OnBooleanValueChangedCb = Proc(Int32, Bool, Void)
+alias OnMultipleNumericValuesChangedCb = Proc(Int32, Pointer(Float32), Int32, Void)
+alias OnClickCb = Proc(Int32, Void)
+
+@[Link("xframesshared")]
+lib XFrames
+  fun init(
+    assetsBasePath : Pointer(LibC::Char),
+    rawFontDefinitions : Pointer(LibC::Char),
+    rawStyleOverrideDefinitions : Pointer(LibC::Char),
+    onInit : OnInitCb,
+    onTextChanged : OnTextChangedCb,
+    onComboChanged : OnComboChangedCb,
+    onNumericValueChanged : OnNumericValueChangedCb,
+    onBooleanValueChanged : OnBooleanValueChangedCb,
+    onMultipleNumericValuesChanged : OnMultipleNumericValuesChangedCb,
+    onClick : OnClickCb
+  ) : Nil
+end
+
+onInit = ->() {  }
+onTextChanged = ->(id : Int32, value : Pointer(LibC::Char)) {  }
+onComboChanged = ->(id : Int32, selected_index : Int32) {  }
+onNumericValueChanged = ->(id : Int32, value : Float32) {  }
+onBooleanValueChanged = ->(id : Int32, value : Bool) {  }
+onMultipleNumericValuesChanged = ->(id : Int32, values: Pointer(Float32), num_values : Int32) {  }
+onClick = ->(id : Int32) { puts "Clicked" }
+
+XFrames.init(
+  "./assets", 
+  font_defs_json,
+  theme2_json, 
+  onInit, 
+  onTextChanged,
+  onComboChanged, 
+  onNumericValueChanged, 
+  onBooleanValueChanged, 
+  onMultipleNumericValuesChanged, 
+  onClick
+)
+
+input = gets
