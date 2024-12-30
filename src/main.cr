@@ -1,8 +1,17 @@
-puts "Hello, Crystal World!"
+require "json"
 
-@[Link("kernel32")]
-lib Kernel32
-  fun Beep(freq : UInt32, duration : UInt32) : Int32
-end
+font_defs = {
+  "defs" => [
+    {"name" => "roboto-regular", "sizes" => [16, 18, 20, 24, 28, 32, 36, 48]}
+  ].map do |entry|
+    name = entry["name"].as(String)
+    sizes = entry["sizes"].as(Array(Int32))
+    sizes.map do |size|
+      {"name" => name, "size" => size}
+    end
+  end.flatten
+}
 
-Kernel32.Beep(750, 300)  # Beep sound
+# Convert to JSON
+json_string = font_defs.to_json
+puts json_string
