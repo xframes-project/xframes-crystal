@@ -4,6 +4,10 @@
 
 ### Install Crystal
 
+#### Linux
+
+Follow the instructions https://crystal-lang.org/install/
+
 #### Windows
 
 `winget install --id=CrystalLang.Crystal  -e`
